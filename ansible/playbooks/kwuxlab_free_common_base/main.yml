@@ -1,0 +1,90 @@
+---
+- hosts: "{{ target_host_group | default('all')}}"
+  become: yes
+  gather_facts: yes
+  handlers:
+    - include: handlers/ssh.yml
+  vars_files:
+    - vars.yml
+    - vars/envoy.yml
+  tags:
+    - kwuxlab_free
+  pre_tasks:
+    - name: Collect facts
+      ansible.builtin.setup:
+      tags:
+        - gather
+
+    - name: Update apt cache if required
+      apt:
+        update_cache: yes
+        cache_valid_time: 600
+
+    - name: Install aptitude if required
+      apt:
+        name: aptitude
+
+    - name: Install base target packages
+      apt:
+        name: "{{ item }}"
+        state: latest
+        update_cache: yes
+        cache_valid_time: 3600
+      loop: "{{ target_packages }}"
+
+    - name: Install setuptools and other required dependencies for pip/docker
+      block:
+        - name: Update apt cache if required
+          apt:
+            update_cache: yes
+            cache_valid_time: 600
+
+        - name: Install python3-pip
+          apt:
+            name: python3-pip
+
+        - name: Install python3-setuptools
+          apt:
+            name: python3-setuptools
+
+    - name: Install pip docker
+      pip:
+        name: docker
+
+    - name: Install pip docker-compose
+      pip:
+        name: docker-compose
+
+  roles:
+    - role: geerlingguy.git
+    - role: geerlingguy.pip
+    - role: geerlingguy.docker
+    # The robustq.envoyproxy is a fork of the original ansible role, and has
+    # been quickly updated to support ubuntu, specifically.
+    #
+    # Credit is due to the original author at:
+    # https://github.com/fabiocruzcoelho/ansible-role-envoyproxy
+    # diff at:
+    # https://github.com/fabiocruzcoelho/ansible-role-envoyproxy/compare/master...robustq:robustq?expand=1
+    - role: robustq.envoyproxy
+      vars:
+        envoy_configuration_template: "envoy_config.yaml.jinja2"
+
+  tasks:
+    - name: Configure local timezone
+      community.general.timezone:
+        name: "{{ default_local_timezone }}"
+
+    - name: Install the latest pip
+      pip:
+        name: pip
+        executable: pip3
+        state: latest
+
+    - name: Install pip docker
+      pip:
+        name: docker
+
+    - name: Install pip docker-compose
+      pip:
+        name: docker-compose

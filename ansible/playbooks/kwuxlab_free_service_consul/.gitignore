@@ -1,0 +1,5 @@
+.idea/
+
+*_environment.yml
+!example_environment.yml
+

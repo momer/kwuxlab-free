@@ -1,0 +1,44 @@
+---
+- hosts: "{{ variable_hosts | default('kwuxlab_hosts') }}"
+  strategy: linear
+  become: yes
+  gather_facts: yes
+  vars_files:
+    - vars/shared.yml
+  tags:
+    - kwuxlab_free_service_vault
+  pre_tasks:
+    - name: Collect facts
+      ansible.builtin.setup:
+      tags:
+        - gather
+
+    - name: Update apt cache if needed
+      apt:
+        update_cache: yes
+
+    - name: Install unzip if required
+      apt:
+        name: unzip
+
+    - name: Install unzip if required
+      apt:
+        name: unzip
+  roles:
+    - role: ansible-community.ansible-vault
+      vars:
+        vault_version: "{{ target_vault_version }}"
+        vault_cluster_name: "{{ datacenter }}"
+        vault_datacenter: "{{ datacenter }}"
+        vault_start_pause_seconds: 5
+        vault_address: "{{ target_vault_bind_address }}"
+
+        vault_backend: consul
+        vault_consul: "{{ target_vault_consul }}"
+        vault_service_registration_consul_address: "{{ target_vault_consul }}"
+        vault_service_registration_consul_enable: true
+        vault_cluster_address: "{{ target_vault_resolved_host_default_ipv4_address }}:{{ (target_vault_port | int) + 1 }}"
+        vault_api_addr: "http://{{ target_vault_resolved_host_default_ipv4_address }}:{{ target_vault_port }}"
+
+      tags:
+        - vault

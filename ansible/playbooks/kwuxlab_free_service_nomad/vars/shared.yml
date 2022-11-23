@@ -1,0 +1,40 @@
+---
+# Set the ansible python interpreter on host
+ansible_python_interpreter: /usr/bin/python3
+
+#
+# Role-speciifc configuration
+#
+
+# Role:
+#   name: `ansible-community.ansible-nomad`
+#   source: https://github.com/ansible-community/ansible-nomad
+
+# Details @ https://hub.docker.com/r/bitnami/nomad
+target_nomad_data_dir: "/var/nomad"
+target_nomad_config_dir: "/etc/nomad.d"
+
+target_nomad_version: "1.2.6"
+
+target_nomad_bind_address: "0.0.0.0"
+target_nomad_resolved_host_default_ipv4_address: "{{ hostvars[inventory_hostname]['ansible_facts']['all_ipv4_addresses'][0] }}"
+target_nomad_consul: "{{ target_nomad_resolved_host_default_ipv4_address }}:8500"
+target_nomad_advertise_address: "{{ target_nomad_resolved_host_default_ipv4_address }}"
+
+target_nomad_skip_ensure_all_hosts: yes
+
+target_nomad_reserved_ports_list:
+  - 22
+  - 4646
+  - 4647
+  - 4648
+  - 8001
+  - 8200
+  - 8201
+  - 8300
+  - 8301
+  - 8302
+  - 8500
+  - 8600
+
+target_nomad_reserved_ports: "{{ target_nomad_reserved_ports_list | map('string') | join(',') }}"

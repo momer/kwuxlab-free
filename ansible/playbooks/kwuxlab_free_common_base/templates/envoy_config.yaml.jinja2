@@ -1,0 +1,11 @@
+#jinja2: trim_blocks:False, lstrip_blocks:False
+static_resources:
+  listeners:
+  clusters:
+admin:
+  access_log_path: "/dev/null"
+  address:
+    socket_address:
+      address: 0.0.0.0
+      port_value: {{ envoy_admin_port }}
+

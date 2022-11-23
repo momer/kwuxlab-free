@@ -1,0 +1,27 @@
+.idea/
+inventory/
+password_file.*
+.vagrant
+rename.sh
+*.token
+/consul/snapshots/*.snap
+
+
+# Ansible environment password files
+password_file.*.txt
+!password_file.example.txt
+**/*_environment.yml
+*_environment.yml
+!example_environment.yml
+
+# Ansible requirements;
+
+# One locally made role is kept
+requirements/*
+!requirements/ansible_roles/authorized_host_recognition
+
+# virtualenv
+kwuxlab-ansible/
+
+# internaldev inventories
+inventories/internaldev/

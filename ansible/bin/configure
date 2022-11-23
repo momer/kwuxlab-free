@@ -1,0 +1,22 @@
+#!/usr/bin/env bash
+
+# Install ansible dependencies/requirements
+./bin/install-requirements
+
+# kwuxlab env
+default_kwuxlab_env="test"
+KWUXLAB_ENV="${KWUXLAB_ENV:-$default_kwuxlab_env}"
+
+base_params=("-vv"
+  "-e" "env=${KWUXLAB_ENV}"
+  "--vault-password-file" "password_file.${KWUXLAB_ENV}.txt")
+
+if [ "$KWUXLAB_ENV" = "test" ]; then
+  base_params+=("--extra-vars=ansible_user=vagrant")
+  base_params+=("--extra-vars=remote_user=vagrant" )
+  base_params+=("--inventory=inventories/${KWUXLAB_ENV}/hostip.ini")
+  base_params+=("--private-key=~/.vagrant.d/insecure_private_key")
+fi
+
+base_params+=("playbooks/kwuxlab_free_common_base/main.yml")
+ansible-playbook "${base_params[@]}"

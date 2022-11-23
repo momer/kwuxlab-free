@@ -1,0 +1,23 @@
+---
+# Features available in Kwuxlab/InfraCasts Pro, NOT available in this playbook:
+#
+# Kwuxlab/InfraCasts Pro: Configure log rotation
+# Kwuxlab/InfraCasts Pro: Configure clock synchronization
+# Kwuxlab/InfraCasts Pro: Configure base journalctl log retention
+# Kwuxlab/InfraCasts Pro: Sudo user and group configuration
+#   - Includes configuration to allow non-root user with Ansible
+#   - Includes configuration of authorized_hosts file
+# Kwuxlab/InfraCasts Pro: Store details of playbook execution (version, etc.) on remote
+#   host for future debugging/upgrade reference.
+#
+# Support Kwuxlab/InfraCasts, AND get these awesome features at https://kwux.com
+
+# Host timezone configuration
+default_local_timezone: America/Chicago
+
+# Base target packages to install
+target_packages:
+  - "wget"
+  - "curl"
+  - "git"
+  - "ufw"

@@ -1,0 +1,29 @@
+---
+
+#
+# Role-speciifc configuration
+#
+
+# Role:
+#   name: `ansible-community.ansible-nomad`
+#   source: https://github.com/ansible-community/ansible-nomad`
+
+# Specifies the amount of memory to reserve, in MB.
+target_nomad_reserved_memory: 300
+
+# Specifies the amount of disk to reserve, in MB.
+target_nomad_reserved_disk: 1500
+
+# Specifies the amount of CPU to reserve, in MHz.
+target_nomad_reserved_cpu: 300
+
+# The Vault token, with access to the kv-v1 store, to be used to store
+# Consul ACLs.
+#
+# Below is an example token; keep yours secret. Keep it safe.
+vault_master_token: "s.79CriBBzcm4cpFaQexmG0lHT"
+
+# Note: Kwuxlab Pro automatically discovers this address via Consul DNS.
+#   - Kwuxlab Free expects that it is hard-wired here, and is susceptible to
+#     failure in the event that of node failure/downtime.
+target_vault_addr: "http://192.168.56.2:8200"

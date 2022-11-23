@@ -1,0 +1,28 @@
+---
+
+#
+# Role-speciifc configuration
+#
+
+# Role:
+#   name: `ansible-consul`
+#   source: https://github.com/ansible-community/ansible-consul
+
+# Recommended: set the target_consul_raw_key
+#   Set the 'raw key', which Consul will use for encryption across
+#   all nodes in the cluster.
+#
+#   This can be generated via the `consul keygen` command, or, can be any
+#   32-byte, Base64 encoded, string.
+#
+#   Ref: https://developer.hashicorp.com/consul/docs/security/encryption
+#
+# Not recommended: set the value of target_consul_raw_key to ""
+#   If the target_consul_raw_key is to an empty string, it will be generated
+#   during consul installation by the ansible-consul module.
+#
+#   Since it is required during later playbooks, you will need to fetch it
+#   from a node at a later time for use in configuration for, e.g., Nomad.
+#
+#   An example is provided here, and should be replaced!
+target_consul_raw_key: "pUqJrVyVRj5jsiYEkM/tFQYfWyJIv4s3XkvDwy7Cu5s="

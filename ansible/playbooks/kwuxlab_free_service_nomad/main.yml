@@ -1,0 +1,92 @@
+---
+- hosts: "{{ variable_hosts | default('kwuxlab_hosts') }}"
+  strategy: linear
+  become: yes
+  gather_facts: yes
+  vars_files:
+    - vars/shared.yml
+  vars:
+    target_expected_server_count: "{{ groups[(variable_hosts | default('kwuxlab_hosts'))] | map('extract', hostvars) | selectattr('primary_consul_server', 'equalto', 'true') | list | length }}"
+  tags:
+    - kwuxlab_ansible_service_nomad
+  pre_tasks:
+    - name: Collect facts
+      ansible.builtin.setup:
+      tags:
+        - gather
+
+    - name: Load variables for this environment
+      include_vars: "{{ env }}_environment.yml"
+      tags:
+        - gather
+      no_log: true
+
+    - name: Update apt cache if needed
+      apt:
+        update_cache: yes
+
+    - name: Install unzip if required
+      apt:
+        name: unzip
+
+  roles:
+    - role: ansible-community.ansible-nomad
+      vars:
+        nomad_version: "{{ target_nomad_version }}"
+        nomad_skip_ensure_all_hosts: "{{ target_nomad_skip_ensure_all_hosts}}"
+
+        nomad_manage_user: no
+
+        # Ansible group
+        nomad_group_name: "{{ variable_hosts | default('kwuxlab_hosts') }}"
+        # This can be helpful if, for example, you've opted to only bring up
+        # one Vagrant/Nomad server node, and so cannot meet the minimum
+        # requirement of the default bootstrap expectation of 3 nodes when using
+        # consul integration (set by the ansible-nomad role).
+        nomad_bootstrap_expect: "{{ [ (target_expected_server_count | int), 3 ] | min }}"
+
+        nomad_cluster_name: "{{ datacenter }}"
+        nomad_datacenter: "{{ datacenter }}"
+        nomad_node_name: "{{ ansible_facts['nodename'] }}"
+
+        # All consul servers in the primary dc are nomad servers
+        nomad_cni_enable: yes
+        nomad_plugins:
+          docker:
+            config:
+              allow_privileged: true
+        nomad_node_role: "{{ 'server' if ((primary_consul_server is defined and ((primary_consul_server | bool) is sameas true)) and (consul_server is defined and ((consul_server | bool) is sameas true))) else 'client' }}"
+        nomad_leave_on_terminate: no
+
+        nomad_reserved_cpu: "{{ target_nomad_reserved_cpu }}"
+        nomad_reserved_memory: "{{ target_nomad_reserved_memory }}"
+        nomad_reserved_disk: "{{ target_nomad_reserved_disk }}"
+        nomad_reserved_ports: "{{ target_nomad_reserved_ports }}"
+        nomad_no_host_uuid: yes
+
+        nomad_bind_address: "{{ target_nomad_bind_address }}"
+        nomad_advertise_address: "{{ target_nomad_advertise_address }}"
+
+        nomad_use_consul: yes
+        # CRITICAL: this must be local; each nomad agent MUST talk to a separate consul agent.
+        # https://github.com/hashicorp/nomad/issues/7532
+        # https://www.nomadproject.io/docs/configuration/consul
+        nomad_consul_address: "{{ target_nomad_consul }}"
+
+        nomad_acl_enabled: no
+
+        nomad_vault_enabled: yes
+        nomad_vault_address: "{{ target_vault_addr }}"
+        nomad_vault_allow_unauthenticated: no
+        nomad_vault_token: "{{ vault_master_token }}"
+
+        nomad_telemetry: yes
+        nomad_telemetry_use_node_name: yes
+        nomad_telemetry_publish_allocation_metrics: yes
+        nomad_telemetry_publish_node_metrics: yes
+        nomad_telemetry_prometheus_metrics: yes
+
+        nomad_autopilot: yes
+
+      tags:
+        - nomad

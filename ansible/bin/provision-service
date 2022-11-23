@@ -1,0 +1,28 @@
+#!/usr/bin/env bash
+
+# Install ansible dependencies/requirements
+./bin/install-requirements
+
+# Service to provision (note: matches name of /ansible/service-<SERVICE_NAME>.yml)
+default_service="consul"
+SERVICE="${SERVICE:-$default_service}"
+
+# Set the KWUXLAB_ENV; default is "test"
+default_kwuxlab_env="test"
+KWUXLAB_ENV="${KWUXLAB_ENV:-$default_kwuxlab_env}"
+
+params=("-vv"
+"-e" "env=${KWUXLAB_ENV}"
+"-e" "ansible_user=vagrant"
+"-e" "remote_user=vagrant"
+"--vault-password-file" "password_file.${KWUXLAB_ENV}.txt"
+"-i" "inventories/${KWUXLAB_ENV}/hostip.ini")
+
+if [[ "$PLAYBOOK_HOSTS" ]]; then
+  params+=("-e" "variable_hosts=${PLAYBOOK_HOSTS}")
+fi
+
+params+=("--private-key=~/.vagrant.d/insecure_private_key")
+params+=("playbooks/kwuxlab_free_service_${SERVICE}/main.yml")
+
+ansible-playbook "${params[@]}"

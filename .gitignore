@@ -1,0 +1,12 @@
+# Intellij IDEA settings
+.idea/
+
+# Vagrant machines for test environment
+.vagrant/
+
+# Ignore common python virtualenv directories
+.env/
+env/
+venv/
+
+*.sw*

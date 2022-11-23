@@ -1,0 +1,24 @@
+#
+# Role-specific configuration
+#
+
+# Role:
+#   name: `robustq.envoyproxy`
+#   source: https://github.com/robustq/ansible-role-envoyproxy/tree/robustq
+
+# Our Envoy installation will listen on port 8001 for the admin panel
+envoy_admin_port: 8001
+
+# Envoy will bind to all interfaces
+envoy_bind_address: "0.0.0.0"
+
+# See supported consul/envoy combinations
+# https://www.consul.io/docs/connect/proxies/envoy
+# https://cloudsmith.io/~tetrate/repos/getenvoy-deb-stable/packages/?sort=-date
+envoy_package_version: "1.18.2.p0.gd362e79-1p75.g76c310e"
+
+# Target envoy package name (sans version)
+envoy_package_name: "getenvoy-envoy"
+
+# Full envoy package target, including version
+envoy_package: "{{ envoy_package_name }}={{ envoy_package_version }}"

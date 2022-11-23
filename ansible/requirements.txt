@@ -1,0 +1,4 @@
+requests == 2.25.1
+docker == 4.4.4
+netaddr
+ansible == 5.7.0

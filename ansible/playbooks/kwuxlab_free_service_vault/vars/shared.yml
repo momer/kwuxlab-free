@@ -1,0 +1,43 @@
+---
+# Set the ansible python interpreter on host
+ansible_python_interpreter: /usr/bin/python3
+
+#
+# Role-speciifc configuration
+#
+
+# Role:
+#   name: `ansible-community.ansible-nomad`
+#   source: https://github.com/ansible-community/ansible-nomad
+
+# Target name of the Vault cluster
+target_vault_cluster_name: "kwuxlab_vault"
+
+# Target Vault version to install
+target_vault_version: "1.9.0"
+
+# Target directory to store Vault required files
+target_vault_root_directory: "/var/lib/vault"
+
+# Target directory to store Vault data on-disk
+target_vault_data_directory: "{{ target_vault_root_directory }}/data"
+
+# Vault listen port
+target_vault_port: "8200"
+
+# Vault bind address (all interfaces)
+target_vault_bind_address: "0.0.0.0"
+
+# Note, with Vagrant, the default_ipv4 address isn't set to our desired address
+# (which is on eth1).
+#
+# However, the first address listed in all_ipv4_addresses is our private network.
+#
+# This is a little shoddy, but allows us to *not* rely on the eth1 interface name
+# for this test environment.
+#
+# Kwuxlab Pro doesn't bump into this particular issue!
+target_vault_resolved_host_default_ipv4_address: "{{ hostvars[inventory_hostname]['ansible_facts']['all_ipv4_addresses'][0] }}"
+
+# Host-local Target location of consul client
+target_vault_consul: "{{ target_vault_resolved_host_default_ipv4_address }}:8500"

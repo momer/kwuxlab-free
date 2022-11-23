@@ -1,0 +1,39 @@
+---
+# Set host ansible python interpreter
+ansible_python_interpreter: /usr/bin/python3
+
+#
+# Role-speciifc configuration
+#
+
+# Role:
+#   name: `ansible-consul`
+#   source: https://github.com/ansible-community/ansible-consul
+
+# Details @ https://hub.docker.com/r/bitnami/consul
+target_consul_version: "1.11.4"
+target_consul_image: "bitnami/consul:{{ target_consul_version }}"
+target_consul_root_directory: "/var/lib/consul"
+target_consul_data_directory: "{{ target_consul_root_directory }}/data"
+target_consul_container_uid: 1001
+
+target_consul_container_name: "kwuxlab_free_consul"
+target_consul_bind_address: "0.0.0.0"
+# Note, with Vagrant, the default_ipv4 address isn't set to our desired address
+# (which is on eth1).
+#
+# However, the first address listed in all_ipv4_addresses is our private network.
+#
+# This is a little shoddy, but allows us to *not* rely on the eth1 interface name
+# for this test environment.
+#
+# Kwuxlab Pro doesn't bump into this particular issue!
+target_consul_resolved_host_default_ipv4_address: "{{ hostvars[inventory_hostname]['ansible_facts']['all_ipv4_addresses'][0] }}"
+
+# https://www.consul.io/docs/install/ports
+target_consul_server_rpc_port: 8300
+target_consul_server_lan_serf_port: 8301
+target_consul_server_wan_serf_port: 8302
+target_consul_ui_port: 8500
+target_consul_dns_port: 8600
+target_consul_sidecar_port_range: "21000-21255"
