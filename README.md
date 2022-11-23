@@ -108,7 +108,7 @@ it's pretty straight-forward; the commands below should fetch all required compo
 
 1. Clone this repository
 2. Begin by creating your target [infrastructure environment](/infrastructure/README.md)
-   [/infrastructure/README.md](/infrastructure/README) for details.
+   [/infrastructure/README.md](/infrastructure/README.md) for details.
 3. Configure your machines with Ansible, securing them and
 installing services like Tailscale, the Hashicorp stack, etc. See this project's
 [/ansible/README](/ansible/README.md) for details.
